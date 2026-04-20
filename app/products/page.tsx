@@ -12,6 +12,9 @@ import { useFilterProducts } from "../hooks/useFilterProducts";
 import { useProducts } from "../hooks/useProducts";
 import { MSWProvider } from "../../components/MSWProvider";
 
+// NEW - using Tanstack hook to fetch same products
+import { useProducts_tanstack } from "../hooks/useProducts_tanstack";
+
 export default function Products() {
     const { addToCart, cartItems, cartItemCount } = useCart();
     const { search, setSearch, filteredProducts } = useFilterProducts();
@@ -20,6 +23,13 @@ export default function Products() {
     // Opret en custom hook (se slide)
     // flyt kode fra denne komponent til useCart (custom hook'en).
     // Importer de samme funktioner til denne komponent.
+
+    // Custom hook from Tanstack
+    const {
+        products: tanstackProducts,
+        isLoading,
+        error,
+    } = useProducts_tanstack();
 
     return (
         <MSWProvider>
@@ -47,6 +57,21 @@ export default function Products() {
             {filteredProducts.length===0 && <p>No products found</p>}
 
             <Link href="/products/2">Product 2</Link>
+
+            <h2>TanStack Products (useProducts_tanstack)</h2>
+
+            {isLoading && <p>Loading TanStack products...</p>}
+            {error && <p>Error loading TanStack products</p>}
+
+            <ul>
+                {tanstackProducts.map((p) => (
+                <li key={p.id}>
+                    <strong>{p.name}</strong> — ${p.price}
+                    <p>{p.description}</p>
+                    <small>{p.category}</small>
+                </li>
+                ))}
+            </ul>
         </div>
         </MSWProvider>
     );
